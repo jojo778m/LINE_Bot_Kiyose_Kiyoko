@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<!--私が大学生講師として勤務している清瀬高校のチューター制度について，ホームページっぽいものを作成してみました．
+現状はチューターの情報発信についてPDFで配信するのみなので，コンテンツが充実したらサーバを借りてアクセスできるようにしても面白いかもしれないです．-->
+<html lang=ja>
+  <head>
+    <meta charset="utf-8">
+    <title>LINEを利用したオンラインでの匿名質問受付システム開発記録</title>
+    <link rel="stylesheet" href="LINE_bot.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+	integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+	crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+    <script src="LINE_bot.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+  </head>
+  <body>
+    <header role="banner">
+      <h2>LINEを利用したオンラインでの匿名質問受付システム開発記録</h2>
+    </header>
+    <div id="loading">
+      <div class="spinner">
+        <div class="bounce1"></div>
+        <div class="bounce2"></div>
+        <div class="bounce3"></div>
+      </div>
+    </div>
+    <div class="flex-container">
+      <nav role="navigation">
+        <h2>目次</h2>
+        <ul>
+          <li>簡単な概要</li>
+          <li>背景知識</li>
+          <li>チューター業務の課題</li>
+          <li>提案手法</li>
+          <li>質問受付の流れ</li>
+          <li>なぜ個人情報が取得されないのか？</li>
+          <li>学校側との連携について</li>
+          <li>技術面の解説</li>
+          <li>チューター内非技術者への説明</li>
+        </ul>
+      </nav>
+      <main role="main">
+        <h1>簡単な概要</h1>
+        <div class="aside_box">
+          <p>都内某公立高校において，生徒さんが大学生講師(チューター)にオンラインで気軽に質問できるように，LINEを利用して匿名で質問ができるシステムを開発した．</p>
+          <img src="linebot.PNG" alt="BOT概要説明">
+        </div>
+        <h1>背景知識</h1>
+        <div class="aside_box">
+          <p>都内某公立高校では，大学生講師(チューター)による自習学習支援事業が行われている．<br>
+            業務内容としては，定期考査１周間前の放課後や長期休暇中に高校を訪れ，質問のある生徒さんの学業の手助けをするというもの．</p>
+        </div>
+        <h1>チューター業務の課題</h1>
+        <div class="aside_box">
+          <ul>
+            <li>コロナ禍において対面での指導業務が不可能</li>
+            <li>質問しに行く敷居の高さによる利用者の少なさ</li>
+          </ul>
+        </div>
+        <h1>提案手法</h1>
+        <div class="aside_box">
+        <p>LINEで質問できるようにし，利用者数の増大と遠隔でのチューター業務を実現する．</p>
+        </div>
+        <h1>質問受付の流れ</h1>
+        <ol id="explanation">
+          <li>生徒さんが自身のLINEにbotを友だちとして登録する<br>(学校経由でQRコードを配布する)</li>
+          <li>アクティベーションキー認証をする<br>(チューターは鍵の一覧表を持つが，生徒の学籍番号と結びつけることはできない)</li>
+          <li>「生徒さんがbotとのトーク画面から質問を送信する<br>(写真の添付も可能)</li>
+          <li>送信を確定するとbotがチューター側に質問内容を連絡する(個人情報は一切取得されない)</li>
+          <li>チューターがbotに対して質問の回答をすると，botが生徒さんに回答内容を送信する</li>
+          <img src="20200509120734 (2).png" alt="清子ちゃん顔写真">
+          <p>▲チャットボットキャラクターの清瀬清子ちゃん</p>
+        </ol>
+        <div class="swiper-container">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide"><img src="line (1).jpg" id="slide"></div>
+            <div class="swiper-slide"><img src="line (2).jpg" id="slide"></div>
+            <div class="swiper-slide"><img src="line (3).jpg" id="slide"></div>
+            <div class="swiper-slide"><img src="line (4).jpg" id="slide"></div>
+            <div class="swiper-slide"><img src="line (5).jpg" id="slide"></div>
+            <div class="swiper-slide"><img src="line (6).jpg" id="slide"></div>
+            <div class="swiper-slide"><img src="line (7).jpg" id="slide"></div>
+            <div class="swiper-slide"><img src="line (8).jpg" id="slide"></div>
+            <div class="swiper-slide"><img src="line (9).jpg" id="slide"></div>
+          </div>
+          <div class="swiper-pagination"></div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
+        </div>
+
+        <h1>なぜ個人情報が取得されないのか？</h1>
+        <div class="aside_box">
+          <p>LINEには匿名IDというものが設定されており，これを取得・利用してbotが送信するため(メルカリの匿名配送に似た仕組み)．<br>
+            匿名IDは一般ユーザにとっては意味のない文字列であり，チューターが知ったとしてもこれを利用して生徒さんと直接連絡を取ることは不可能．</p>
+        </div>
+
+        <h1>学校側との連携について</h1>
+        <div class="aside_box">
+          <p>生徒さんからの質問とチューターからの回答の内容については以下の手法で先生方と共有可能</p>
+          <ul>
+            <li>質問内容を記録しているGoogle Spreadsheetの共有(Googkeアカウントが必要)</li>
+            <li>質問内容の通知と回答処理を行うLINEグループに参加(LINEアカウントが必要)</li>
+          </ul>
+        </div>
+
+        <h1>技術面の解説</h1>
+        <div class="aside_box">
+          <h3>使っているもの：</h3>
+          <p>GAS：botを動かすためのコードは全てGASで制御している．<br>
+            Google Spreadsheet：質問内容の管理やキャッシュ管理など<br>
+            Google Drive：画像の保存<br>
+            LINE Developers：botの設定やwebhook URLの登録，アクセストークンの発行など</p>
+          <p>コードを管理するエンジニアとbotを管理する管理者(非エンジニア)に権限を分散することで悪意のあるエンジニアの暴走を防いでいる．</p>
+          <img src="LINE_bot_admin_engineer.PNG" alt="管理者とエンジニアについて">
+
+          <h3>コードについて：</h3>
+          <h4>フローチャート</h4>
+          <img src="flowchart.png" alt="フローチャート">
+
+          <div class="Maings">
+            <h4>メイン.gs</h4>
+            <p>メッセージが来るたびにメイン.gs内のdoPost(e)が発火する．本botの処理は全てdoPostを起点に進む．グループIDを取得し，チューター側からの送信であれば質問箱to生徒.gsのreply_questionへ．<br>
+              キャッシュ関係をSpreadsheetからロードし，取得した質問者のuserIDと比較して，質問者がすでに質問中か否か判断．質問中でなければ新たにキャッシュに追加．<br>
+              質問を受けている最中に画像が送信された場合，画像保存.gsへ．そうでなければ生徒to質問箱.gsへ．</p>
+          </div>
+          <div class="Quegs">
+            <h4>生徒to質問箱.gs</h4>
+            <h5>できること：</h5>
+            <ul>
+              <li>認証済みアカウントか否かのチェック</li>
+              <li>ヘルプで使い方の確認</li>
+              <li>質問の受付(以下生徒側のフロー)</li>
+              <ol>
+                <li>「質問があります」で質問の入力へ</li>
+                <li>学年を聞かれるが，匿名にしたい場合は「匿名」，「とくめい」などと送信(ペンネームなども可能)</li>
+                <li>質問内容を送信(複数回のテキストにわけたり，画像の添付も可能)</li>
+                <li>「おわり」で質問の入力を終了</li>
+                <li>質問内容を確認し，「はい」で送信完了</li>
+              </ol>
+            </ul>
+          </div>
+          <div class="Authgs">
+            <h4>アカウント認証.gs</h4>
+            <p>認証の済んでいないアカウントからメッセージを受け取った際，入力されたアクティベーションキーが正しいかどうか判断する．<br>
+              正しい鍵であれば認証済みアカウントに追加し，鍵の種類から学年を割り出し保存する．(学年以外の情報は取得できない仕様)<br>
+              間違った鍵を５回入力すると，以降そのアカウントからは認証を受け付けない．鍵は一度しか使用できない．</p>
+          </div>
+          <div class="Picgs">
+            <h4>画像保存.gs</h4>
+            <p>上の3で画像が添付された際の処理．Driveに保存するため，他の処理に比べてかなり重たい．(6秒程度待たされる)</p>
+          </div>
+          <div class="Ansgs">
+            <h4>質問箱to生徒.gs</h4>
+            <h5>できること：</h5>
+            <ul>
+              <li>質問への回答</li>
+              <li>自動返信</li>
+              <li>ブラックリストへ登録・解除</li>
+            </ul>
+            <p>以下チューター側のフロー</p>
+            <ol>
+              <li>botに呼びかけて回答の入力へ</li>
+              <li>質問番号を入力(質問受付完了時にSpreadsheetの行数として質問番号が割り振られる)</li>
+              <li>回答内容の入力or自動返信*orブラックリスト操作**</li>
+              <li>回答内容を確認し，「はい」で送信完了</li>
+            </ol>
+            <p>*自動返信は”チューターから回答するのが難しい質問に対して使用(学業に著しく関係ない質問，意図が掴みきれない質問など)<br>
+            **ブラックリストに入ると生徒to質問箱.gsの5の部分で送信できなくなる．非常に悪意のある操作により，システムの運営が困難になった際に使用する．<br>
+            質問箱to生徒.gsではキャッシュ管理をCache Serviceを利用して実装している．生徒to質問箱.gsではキャッシュの量が大量になるため，少し重たくなるがSpreadsheetに一時期的に書き込みしている．</p>
+          </div>
+        </div>
+
+        <h1>チューター内非技術者への説明</h1>
+        <div class="aside_box">
+          先述の通り，botの管理はコードの読めるエンジニアと非技術者である管理者が連携して行うため，非技術者に対して管理者の必要性をわかりやすく説明する必要がある．
+          そこで翌年度以降の引き継ぎの際にも活用できるよう，説明用スライドを作成した．正確性を失わない範囲で，なるべく平易な表現とたとえ話を使って説明している．</p>
+        </div>
+
+
+        <div class="swiper-container Slides">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide"><img src="Slide3.PNG" id="slide"></div>
+            <div class="swiper-slide"><img src="Slide4.PNG" id="slide"></div>
+            <div class="swiper-slide"><img src="Slide5.PNG" id="slide"></div>
+            <div class="swiper-slide"><img src="Slide6.PNG" id="slide"></div>
+            <div class="swiper-slide"><img src="Slide7.PNG" id="slide"></div>
+            <div class="swiper-slide"><img src="Slide8.PNG" id="slide"></div>
+            <div class="swiper-slide"><img src="Slide9.PNG" id="slide"></div>
+            <div class="swiper-slide"><img src="Slide10.PNG" id="slide"></div>
+          </div>
+          <div class="swiper-pagination"></div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
+        </div>
+
+
+      </main>
+      <aside role="complementary">
+      </aside>
+    </div>
+    <footer role="contentinfo">
+      <p>Contact Me: c221578a@icu.ac.jp</p>
+    </footer>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+  </body>
+</html>
