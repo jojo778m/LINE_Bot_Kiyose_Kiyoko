@@ -1,6 +1,6 @@
 window.onload = () => {
   const spinner = document.getElementById('loading');
-  window.setTimeout(()=>{spinner.classList.add('loaded')}, 500);
+  spinner.classList.add('loaded');
 }
 
 window.addEventListener('load', function(){
