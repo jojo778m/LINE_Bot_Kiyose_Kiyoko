@@ -70,6 +70,11 @@ body {
   z-index: 9999;
 }
 
+.loading_message{
+  text-align: center;
+  color: #CC6633;
+}
+
 #explanation{
   padding: 0.5em 3em;
   margin: 1em 0;
