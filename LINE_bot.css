@@ -337,7 +337,7 @@ input[type=search]{
     }
 }
 
-.swiper-container {
+.swiper {
   float: left;
   margin-top: 20px;
   margin-left: 10%;
@@ -345,6 +345,8 @@ input[type=search]{
   max-width: 350px;
   padding: 0 15px;
 }
+
+
 
 @media screen and (max-width: 1000px) {
   .swiper-container {
